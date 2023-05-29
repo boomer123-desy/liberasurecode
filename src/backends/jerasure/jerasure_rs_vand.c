@@ -33,6 +33,10 @@
 #include "erasurecode_backend.h"
 #include "erasurecode_helpers.h"
 #include "erasurecode_helpers_ext.h"
+#include "jerasure.h"
+#include "cauchy.h"
+#include "galois.h"
+#include "reed_sol.h"
 
 #define JERASURE_RS_VAND_LIB_MAJOR 2
 #define JERASURE_RS_VAND_LIB_MINOR 0
@@ -200,8 +204,7 @@ static int jerasure_rs_vand_min_fragments(void *desc, int *missing_idxs,
 }
 
 #define DEFAULT_W 16
-static void * jerasure_rs_vand_init(struct ec_backend_args *args,
-        void *backend_sohandle)
+static void * jerasure_rs_vand_init(struct ec_backend_args *args)
 {
     struct jerasure_rs_vand_descriptor *desc = NULL;
     
@@ -237,64 +240,64 @@ static void * jerasure_rs_vand_init(struct ec_backend_args *args,
      * Since dlsym return returns a void*, we use this union to
      * "transform" the void* to a function pointer.
      */
-    union {
-        reed_sol_vandermonde_coding_matrix_func initp;
-        galois_uninit_field_func uninitp;
-        jerasure_matrix_encode_func encodep;
-        jerasure_matrix_decode_func decodep;
-        jerasure_make_decoding_matrix_func decodematrixp;
-        jerasure_erasures_to_erased_func erasep;
-        jerasure_matrix_dotprod_func dotprodp;
-        void *vptr;
-    } func_handle = {.vptr = NULL};
+    // union {
+    //     reed_sol_vandermonde_coding_matrix_func initp;
+    //     galois_uninit_field_func uninitp;
+    //     jerasure_matrix_encode_func encodep;
+    //     jerasure_matrix_decode_func decodep;
+    //     jerasure_make_decoding_matrix_func decodematrixp;
+    //     jerasure_erasures_to_erased_func erasep;
+    //     jerasure_matrix_dotprod_func dotprodp;
+    //     void *vptr;
+    // } func_handle = {.vptr = NULL};
 
 
     /* fill in function addresses */
-    func_handle.vptr = NULL;
-    func_handle.vptr = dlsym(backend_sohandle, "jerasure_matrix_encode");
-    desc->jerasure_matrix_encode = func_handle.encodep;
+    // func_handle.vptr = NULL;
+    // func_handle.vptr = ;
+    desc->jerasure_matrix_encode = jerasure_matrix_encode;
     if (NULL == desc->jerasure_matrix_encode) {
         goto error; 
     }
   
-    func_handle.vptr = NULL;
-    func_handle.vptr = dlsym(backend_sohandle, "jerasure_matrix_decode");
-    desc->jerasure_matrix_decode = func_handle.decodep;
+    // func_handle.vptr = NULL;
+    // func_handle.vptr = ;
+    desc->jerasure_matrix_decode = jerasure_matrix_decode;
     if (NULL == desc->jerasure_matrix_decode) {
         goto error; 
     }
   
-    func_handle.vptr = NULL;
-    func_handle.vptr = dlsym(backend_sohandle, "jerasure_make_decoding_matrix");
-    desc->jerasure_make_decoding_matrix = func_handle.decodematrixp;
+    // func_handle.vptr = NULL;
+    // func_handle.vptr = ;
+    desc->jerasure_make_decoding_matrix = jerasure_make_decoding_matrix;
     if (NULL == desc->jerasure_make_decoding_matrix) {
         goto error; 
     }
   
-    func_handle.vptr = NULL;
-    func_handle.vptr = dlsym(backend_sohandle, "jerasure_matrix_dotprod");
-    desc->jerasure_matrix_dotprod = func_handle.dotprodp;
+    // func_handle.vptr = NULL;
+    // func_handle.vptr = &jerasure_matrix_dotprod;
+    desc->jerasure_matrix_dotprod = jerasure_matrix_dotprod;
     if (NULL == desc->jerasure_matrix_dotprod) {
         goto error; 
     }
   
-    func_handle.vptr = NULL;
-    func_handle.vptr = dlsym(backend_sohandle, "jerasure_erasures_to_erased");
-    desc->jerasure_erasures_to_erased = func_handle.erasep;
+    // func_handle.vptr = NULL;
+    // func_handle.vptr = &jerasure_erasures_to_erased;
+    desc->jerasure_erasures_to_erased = jerasure_erasures_to_erased;
     if (NULL == desc->jerasure_erasures_to_erased) {
         goto error; 
     }
  
-    func_handle.vptr = NULL;
-    func_handle.vptr = dlsym(backend_sohandle, "reed_sol_vandermonde_coding_matrix");
-    desc->reed_sol_vandermonde_coding_matrix = func_handle.initp;
+    // func_handle.vptr = NULL;
+    // func_handle.vptr = &reed_sol_vandermonde_coding_matrix;
+    desc->reed_sol_vandermonde_coding_matrix = reed_sol_vandermonde_coding_matrix;
     if (NULL == desc->reed_sol_vandermonde_coding_matrix) {
         goto error; 
     }
 
-    func_handle.vptr = NULL;
-    func_handle.vptr = dlsym(backend_sohandle, "galois_uninit_field");
-    desc->galois_uninit_field = func_handle.uninitp;
+    // func_handle.vptr = NULL;
+    // func_handle.vptr = &galois_uninit_field;
+    desc->galois_uninit_field = galois_uninit_field;
     if (NULL == desc->galois_uninit_field) {
         goto error;
     }

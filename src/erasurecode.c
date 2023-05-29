@@ -40,29 +40,30 @@
 #include "alg_sig.h"
 #include "erasurecode_log.h"
 
+
 /* =~=*=~==~=*=~==~=*=~= Supported EC backends =~=*=~==~=*=~==~=*=~==~=*=~== */
 
 /* EC backend references */
-extern struct ec_backend_common backend_null;
-extern struct ec_backend_common backend_flat_xor_hd;
+// extern struct ec_backend_common backend_null;
+// extern struct ec_backend_common backend_flat_xor_hd;
 extern struct ec_backend_common backend_jerasure_rs_vand;
-extern struct ec_backend_common backend_jerasure_rs_cauchy;
-extern struct ec_backend_common backend_isa_l_rs_vand;
-extern struct ec_backend_common backend_shss;
-extern struct ec_backend_common backend_liberasurecode_rs_vand;
-extern struct ec_backend_common backend_isa_l_rs_cauchy;
-extern struct ec_backend_common backend_libphazr;
+// extern struct ec_backend_common backend_jerasure_rs_cauchy;
+// extern struct ec_backend_common backend_isa_l_rs_vand;
+// extern struct ec_backend_common backend_shss;
+// extern struct ec_backend_common backend_liberasurecode_rs_vand;
+// extern struct ec_backend_common backend_isa_l_rs_cauchy;
+// extern struct ec_backend_common backend_libphazr;
 
 ec_backend_t ec_backends_supported[] = {
-    (ec_backend_t) &backend_null,
+    // (ec_backend_t) &backend_null,
     (ec_backend_t) &backend_jerasure_rs_vand,
-    (ec_backend_t) &backend_jerasure_rs_cauchy,
-    (ec_backend_t) &backend_flat_xor_hd,
-    (ec_backend_t) &backend_isa_l_rs_vand,
-    (ec_backend_t) &backend_shss,
-    (ec_backend_t) &backend_liberasurecode_rs_vand,
-    (ec_backend_t) &backend_isa_l_rs_cauchy,
-    (ec_backend_t) &backend_libphazr,
+    // (ec_backend_t) &backend_jerasure_rs_cauchy,
+    // (ec_backend_t) &backend_flat_xor_hd,
+    // (ec_backend_t) &backend_isa_l_rs_vand,
+    // (ec_backend_t) &backend_shss,
+    // (ec_backend_t) &backend_liberasurecode_rs_vand,
+    // (ec_backend_t) &backend_isa_l_rs_cauchy,
+    // (ec_backend_t) &backend_libphazr,
     NULL,
 };
 
@@ -164,20 +165,20 @@ exit:
 
 /* =~=*=~==~=*=~== liberasurecode backend API helpers =~=*=~==~=*=~== */
 
-static void print_dlerror(const char *caller)
-{
-    char *msg = dlerror();
-    if (NULL == msg)
-        log_error("%s: unknown dynamic linking error\n", caller);
-    else
-        log_error("%s: dynamic linking error %s\n", caller, msg);
-}
+// static void print_dlerror(const char *caller)
+// {
+//     char *msg = dlerror();
+//     if (NULL == msg)
+//         log_error("%s: unknown dynamic linking error\n", caller);
+//     else
+//         log_error("%s: dynamic linking error %s\n", caller, msg);
+// }
 
 /* Generic dlopen/dlclose routines */
 void* liberasurecode_backend_open(ec_backend_t instance)
 {
     if (NULL == instance)
-        return NULL;
+        return NULL;        
     /* Use RTLD_LOCAL to avoid symbol collisions */
     return dlopen(instance->common.soname, RTLD_LAZY | RTLD_LOCAL);
 }
@@ -230,17 +231,17 @@ liberasurecode_exit(void) {
  * @returns 1 if a backend is available; 0 otherwise
  */
 int liberasurecode_backend_available(const ec_backend_id_t backend_id) {
-    struct ec_backend backend;
-    if (backend_id >= EC_BACKENDS_MAX)
-        return 0;
+    // struct ec_backend backend;
+    // if (backend_id >= EC_BACKENDS_MAX)
+    //     return 0;
 
-    backend.desc.backend_sohandle = liberasurecode_backend_open(
-            ec_backends_supported[backend_id]);
-    if (!backend.desc.backend_sohandle) {
-        return 0;
-    }
+    // backend.desc.backend_sohandle = liberasurecode_backend_open(
+    //         ec_backends_supported[backend_id]);
+    // if (!backend.desc.backend_sohandle) {
+    //     return 0;
+    // }
 
-    liberasurecode_backend_close(&backend);
+    // liberasurecode_backend_close(&backend);
     return 1;
 }
 
@@ -263,16 +264,12 @@ int liberasurecode_backend_available(const ec_backend_id_t backend_id) {
  *
  * @returns liberasurecode instance descriptor (int > 0)
  */
-int liberasurecode_instance_create(const ec_backend_id_t id,
-                                   struct ec_args *args)
+int liberasurecode_instance_create(struct ec_args *args)
 {
     ec_backend_t instance = NULL;
     struct ec_backend_args bargs;
     if (!args)
         return -EINVALIDPARAMS;
-
-    if (id >= EC_BACKENDS_MAX)
-        return -EBACKENDNOTSUPP;
 
     if (args->k < 0 || args->m < 0)
         return -EINVALIDPARAMS;
@@ -288,25 +285,25 @@ int liberasurecode_instance_create(const ec_backend_id_t id,
         return -ENOMEM;
 
     /* Copy common backend, args struct */
-    instance->common = ec_backends_supported[id]->common;
+    instance->common = ec_backends_supported[0]->common;
     memcpy(&(bargs.uargs), args, sizeof (struct ec_args));
     instance->args = bargs;
 
     /* Open backend .so if not already open */
     /* .so handle is returned in instance->desc.backend_sohandle */
-    if (!instance->desc.backend_sohandle) {
-        instance->desc.backend_sohandle = liberasurecode_backend_open(instance);
-        if (!instance->desc.backend_sohandle) {
-            /* ignore during init, return the same handle */
-            print_dlerror(__func__);
-            free(instance);
-            return -EBACKENDNOTAVAIL;
-        }
-    }
+    // if (!instance->desc.backend_sohandle) {
+    //     instance->desc.backend_sohandle = liberasurecode_backend_open(instance);
+    //     if (!instance->desc.backend_sohandle) {
+    //         /* ignore during init, return the same handle */
+    //         print_dlerror(__func__);
+    //         free(instance);
+    //         return -EBACKENDNOTAVAIL;
+    //     }
+    // }
 
     /* Call private init() for the backend */
     instance->desc.backend_desc = instance->common.ops->init(
-            &instance->args, instance->desc.backend_sohandle);
+            &instance->args);
     if (NULL == instance->desc.backend_desc) {
         free (instance);
         return -EBACKENDINITERR;

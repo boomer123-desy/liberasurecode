@@ -67,5 +67,4 @@ int isa_l_min_fragments(void *desc, int *missing_idxs,
         int *fragments_to_exclude, int *fragments_needed);
 int isa_l_element_size(void* desc);
 int isa_l_exit(void *desc);
-void * isa_l_common_init(struct ec_backend_args *args, void *backend_sohandle,
-        const char* gen_matrix_func_name);
+void * isa_l_common_init(struct ec_backend_args *args);

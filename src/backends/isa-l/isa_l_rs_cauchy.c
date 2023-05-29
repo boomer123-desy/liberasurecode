@@ -43,45 +43,45 @@
 #define ISA_L_RS_CAUCHY_SO_NAME "libisal" LIBERASURECODE_SO_SUFFIX ".so.2"
 #endif
 
-/* Forward declarations */
-struct ec_backend_op_stubs isa_l_rs_cauchy_ops;
-struct ec_backend isa_l_rs_cauchy;
-struct ec_backend_common backend_isa_l_rs_cauchy;
+// /* Forward declarations */
+// struct ec_backend_op_stubs isa_l_rs_cauchy_ops;
+// struct ec_backend isa_l_rs_cauchy;
+// struct ec_backend_common backend_isa_l_rs_cauchy;
 
-static void * isa_l_rs_cauchy_init(struct ec_backend_args *args,
-        void *backend_sohandle)
-{
-    return isa_l_common_init(args, backend_sohandle, "gf_gen_cauchy1_matrix");
-}
+// static void * isa_l_rs_cauchy_init(struct ec_backend_args *args,
+//         void *backend_sohandle)
+// {
+//     return isa_l_common_init(args, backend_sohandle, "gf_gen_cauchy1_matrix");
+// }
 
-/*
- * For the time being, we only claim compatibility with versions that
- * match exactly
- */
-static bool isa_l_rs_cauchy_is_compatible_with(uint32_t version) {
-    return version == backend_isa_l_rs_cauchy.ec_backend_version;
-}
+// /*
+//  * For the time being, we only claim compatibility with versions that
+//  * match exactly
+//  */
+// static bool isa_l_rs_cauchy_is_compatible_with(uint32_t version) {
+//     return version == backend_isa_l_rs_cauchy.ec_backend_version;
+// }
 
-struct ec_backend_op_stubs isa_l_rs_cauchy_op_stubs = {
-    .INIT                       = isa_l_rs_cauchy_init,
-    .EXIT                       = isa_l_exit,
-    .ENCODE                     = isa_l_encode,
-    .DECODE                     = isa_l_decode,
-    .FRAGSNEEDED                = isa_l_min_fragments,
-    .RECONSTRUCT                = isa_l_reconstruct,
-    .ELEMENTSIZE                = isa_l_element_size,
-    .ISCOMPATIBLEWITH           = isa_l_rs_cauchy_is_compatible_with,
-    .GETMETADATASIZE            = get_backend_metadata_size_zero,
-    .GETENCODEOFFSET            = get_encode_offset_zero,
-};
+// struct ec_backend_op_stubs isa_l_rs_cauchy_op_stubs = {
+//     .INIT                       = isa_l_rs_cauchy_init,
+//     .EXIT                       = isa_l_exit,
+//     .ENCODE                     = isa_l_encode,
+//     .DECODE                     = isa_l_decode,
+//     .FRAGSNEEDED                = isa_l_min_fragments,
+//     .RECONSTRUCT                = isa_l_reconstruct,
+//     .ELEMENTSIZE                = isa_l_element_size,
+//     .ISCOMPATIBLEWITH           = isa_l_rs_cauchy_is_compatible_with,
+//     .GETMETADATASIZE            = get_backend_metadata_size_zero,
+//     .GETENCODEOFFSET            = get_encode_offset_zero,
+// };
 
-struct ec_backend_common backend_isa_l_rs_cauchy = {
-    .id                         = EC_BACKEND_ISA_L_RS_CAUCHY,
-    .name                       = ISA_L_RS_CAUCHY_LIB_NAME,
-    .soname                     = ISA_L_RS_CAUCHY_SO_NAME,
-    .soversion                  = ISA_L_RS_CAUCHY_LIB_VER_STR,
-    .ops                        = &isa_l_rs_cauchy_op_stubs,
-    .ec_backend_version         = _VERSION(ISA_L_RS_CAUCHY_LIB_MAJOR,
-                                           ISA_L_RS_CAUCHY_LIB_MINOR,
-                                           ISA_L_RS_CAUCHY_LIB_REV),
-};
+// struct ec_backend_common backend_isa_l_rs_cauchy = {
+//     .id                         = EC_BACKEND_ISA_L_RS_CAUCHY,
+//     .name                       = ISA_L_RS_CAUCHY_LIB_NAME,
+//     .soname                     = ISA_L_RS_CAUCHY_SO_NAME,
+//     .soversion                  = ISA_L_RS_CAUCHY_LIB_VER_STR,
+//     .ops                        = &isa_l_rs_cauchy_op_stubs,
+//     .ec_backend_version         = _VERSION(ISA_L_RS_CAUCHY_LIB_MAJOR,
+//                                            ISA_L_RS_CAUCHY_LIB_MINOR,
+//                                            ISA_L_RS_CAUCHY_LIB_REV),
+// };
